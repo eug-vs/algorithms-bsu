@@ -20,8 +20,8 @@ int leftmost(vector<int> v, int target) {
   return L;
 }
 
-int rightmost(vector<int> v, int target) {
-  int L = 0;
+int rightmost(vector<int> v, int target, int leftmost = 0) {
+  int L = leftmost;
   int R = v.size();
   int i;
   while (L < R) {
@@ -32,7 +32,7 @@ int rightmost(vector<int> v, int target) {
       L = i + 1;
     }
   }
-  return R - 1;
+  return R;
 }
 
 
@@ -42,20 +42,20 @@ int main() {
 
   cin >> length;
   vector<int> array(length);
-  for (int i = 0; i< length; i++) {
+  for (int i = 0; i < length; i++) {
     cin >> array[i];
   }
 
   cin >> queries_length;
   vector<int> queries(queries_length);
-  for (int i = 0; i< queries_length; i++) {
+  for (int i = 0; i < queries_length; i++) {
     cin >> queries[i];
   }
 
   for (int query : queries){
     int l = leftmost(array, query);
-    int r = rightmost(array, query) + 1;
     bool b = (array[l] == query);
+    int r = b? rightmost(array, query, l) : l;
     cout << b << " " << l << " " << r << endl;
   };
 
