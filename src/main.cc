@@ -71,11 +71,11 @@ class Tree {
         }
       }
       if (child->left && child->right) {
-        Node* min = child->right;
-        while(min->left) min = min->left;
-        int min_key = min->value;
-        remove(min_key);
-        child->value = min_key;
+        Node* max = child->left;
+        while(max->right) max = max->right;
+        int max_key = max->value;
+        remove(max_key);
+        child->value = max_key;
         return;
       } else if (child->left && !child->right) {
         *current = child->left;
