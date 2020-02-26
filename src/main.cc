@@ -6,8 +6,6 @@ using namespace std;
 #define OUTPUT "output.txt"
 
 
-
-
 class Tree {
   private:
     class Node {
@@ -44,7 +42,6 @@ class Tree {
           delete right;
         }
     };
-
     Node* root;
 
   public:
@@ -73,7 +70,6 @@ class Tree {
           else return;
         }
       }
-
       if (child->left && child->right) {
         Node* min = child->right;
         while(min->left) min = min->left;
@@ -81,7 +77,6 @@ class Tree {
         remove(min_key);
         child->value = min_key;
         return;
-
       } else if (child->left && !child->right) {
         *current = child->left;
         child->left = nullptr;
