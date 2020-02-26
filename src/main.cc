@@ -1,57 +1,11 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <vector>
 using namespace std;
 
 #define INPUT "input.txt"
 #define OUTPUT "output.txt"
-
-class Node {
-  private:
-    Node* left;
-    Node* right;
-
-  public:
-    int value;
-
-    Node(int x) {
-      left = nullptr;
-      right = nullptr;
-      value = x;
-    }
-
-    Node(string s) {
-      left = nullptr;
-      right = nullptr;
-      value = stoi(s);
-    }
-
-    void insert(int x) {
-      if (x < value) {
-        if (left) left->insert(x);
-        else left = new Node(x);
-      } else if (x > value) {
-        if (right) right->insert(x);
-        else right = new Node(x);
-      }
-    }
-
-    void insert(string s) {
-      insert(stoi(s));
-    }
-
-    friend ostream& operator<< (ostream& fout, const Node& node) {
-      fout << node.value << endl;
-      if (node.left) fout << *node.left;
-      if (node.right) fout << *node.right;
-      return fout;
-    }
-
-    ~Node() {
-      delete left;
-      delete right;
-    }
-};
 
 
 int main() {
@@ -62,13 +16,20 @@ int main() {
   fin.open(INPUT);
   fout.open(OUTPUT);
 
-  getline(fin, buffer);
-  Node root(buffer);
-  while(getline(fin, buffer)) {
-    root.insert(buffer);
+  int length;
+  int queries_length;
+
+  fin >> length;
+  vector<int> array(length);
+  for (int i = 0; i< length; i++) {
+    fin >> array[i];
   }
 
-  fout << root;
+  fin >> queries_length;
+  vector<int> queries(queries_length);
+  for (int i = 0; i< queries_length; i++) {
+    fin >> queries[i];
+  }
 
   fout.close();
   fin.close();
