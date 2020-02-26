@@ -4,16 +4,13 @@
 #include <vector>
 using namespace std;
 
-#define INPUT "input.txt"
-#define OUTPUT "output.txt"
-
 
 int leftmost(vector<int> v, int target) {
   int L = 0;
   int R = v.size();
   int i;
   while (L < R) {
-    i = (int)((L+R)/2);
+    i = (int)((L + R) / 2);
     if (v[i] < target) {
       L = i + 1;
     } else {
@@ -28,7 +25,7 @@ int rightmost(vector<int> v, int target) {
   int R = v.size();
   int i;
   while (L < R) {
-    i = (int)((L+R)/2);
+    i = (int)((L + R) / 2);
     if (v[i] > target) {
       R = i;
     } else {
@@ -40,26 +37,19 @@ int rightmost(vector<int> v, int target) {
 
 
 int main() {
-  ifstream fin;
-  ofstream fout;
-  string buffer;
-
-  fin.open(INPUT);
-  fout.open(OUTPUT);
-
   int length;
   int queries_length;
 
-  fin >> length;
+  cin >> length;
   vector<int> array(length);
   for (int i = 0; i< length; i++) {
-    fin >> array[i];
+    cin >> array[i];
   }
 
-  fin >> queries_length;
+  cin >> queries_length;
   vector<int> queries(queries_length);
   for (int i = 0; i< queries_length; i++) {
-    fin >> queries[i];
+    cin >> queries[i];
   }
 
   for (int query : queries){
@@ -69,8 +59,6 @@ int main() {
     cout << b << " " << l << " " << r << endl;
   };
 
-  fout.close();
-  fin.close();
   return 0;
 }
 
