@@ -1,5 +1,4 @@
 #include <iostream>
-#include <string>
 #include <fstream>
 using namespace std;
 
@@ -20,12 +19,6 @@ class Node {
       value = x;
     }
 
-    Node(string s) {
-      left = nullptr;
-      right = nullptr;
-      value = stoi(s);
-    }
-
     void insert(int x) {
       if (x < value) {
         if (left) left->insert(x);
@@ -34,10 +27,6 @@ class Node {
         if (right) right->insert(x);
         else right = new Node(x);
       }
-    }
-
-    void insert(string s) {
-      insert(stoi(s));
     }
 
     friend ostream& operator<< (ostream& fout, const Node& node) {
@@ -57,18 +46,20 @@ class Node {
 int main() {
   ifstream fin;
   ofstream fout;
-  string buffer;
 
   fin.open(INPUT);
   fout.open(OUTPUT);
 
-  getline(fin, buffer);
-  Node root(buffer);
-  while(getline(fin, buffer)) {
-    root.insert(buffer);
+  int target;
+  int key;
+
+  fin >> target >> key;
+  Node root(key);
+  while(fin >> key) {
+    root.insert(key);
   }
 
-  fout << root;
+  cout << root;
 
   fout.close();
   fin.close();
