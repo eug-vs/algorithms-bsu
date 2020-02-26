@@ -29,16 +29,45 @@ class Node {
       }
     }
 
-    friend ostream& operator<< (ostream& fout, const Node& node) {
-      fout << node.value << endl;
-      if (node.left) fout << *node.left;
-      if (node.right) fout << *node.right;
-      return fout;
+    friend ostream& operator<< (ostream& os, const Node& node) {
+      os << node.value << endl;
+      if (node.left) os << *node.left;
+      if (node.right) os << *node.right;
+      return os;
     }
 
     ~Node() {
       delete left;
       delete right;
+    }
+};
+
+
+class Tree {
+  private:
+    Node* root;
+
+  public:
+
+    Tree() {
+      root = nullptr;
+    }
+
+    void insert(int x) {
+      if (root) {
+        root->insert(x);
+      } else {
+        root = new Node(x);
+      }
+    }
+
+    friend ostream& operator<< (ostream& os, const Tree& tree) {
+      os << *tree.root;
+      return os;
+    }
+
+    ~Tree() {
+      delete root;
     }
 };
 
@@ -53,13 +82,13 @@ int main() {
   int target;
   int key;
 
-  fin >> target >> key;
-  Node root(key);
+  fin >> target;
+  Tree tree;
   while(fin >> key) {
-    root.insert(key);
+    tree.insert(key);
   }
 
-  cout << root;
+  cout << tree;
 
   fout.close();
   fin.close();
