@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <vector>
 using namespace std;
 
 #define INPUT "input.txt"
@@ -89,6 +90,17 @@ class Tree {
       delete child;
     }
 
+    int find_matches(vector<int> &matches, Node* node = nullptr) {
+      if (!node) node = root;
+      int height_left = 0, height_right = 0;
+      if (node->left) height_left = find_matches(matches, node->left);
+      if (node->right) height_right = find_matches(matches, node->right);
+      int left = height_left? height_left : -1;
+      int right = height_right? height_right : -1;
+      if (abs(left - right) == 2) matches.push_back(node->value);
+      return max(height_left, height_right) + 1;
+    }
+
     friend ostream& operator<< (ostream& os, const Tree& tree) {
       os << *tree.root;
       return os;
@@ -107,17 +119,17 @@ int main() {
   fin.open(INPUT);
   fout.open(OUTPUT);
 
-  int target;
   int key;
-
-  fin >> target;
   Tree tree;
   while(fin >> key) {
     tree.insert(key);
   }
 
-  tree.remove(target);
-  fout << tree;
+  cout << tree << endl;
+  vector<int> matches;
+  tree.find_matches(matches);
+  for (auto match : matches) cout << match << " ";
+  cout << endl;
 
   fout.close();
   fin.close();
