@@ -3,8 +3,8 @@
 #include <vector>
 using namespace std;
 
-#define INPUT "input.txt"
-#define OUTPUT "output.txt"
+#define INPUT "tst.in"
+#define OUTPUT "tst.out"
 
 
 class Tree {
@@ -133,9 +133,10 @@ int main() {
     if (abs(match - true_average) < abs(average - true_average)) average = match;
   }
   tree.remove(average);
-  cout << tree << endl;
+  fout << tree << endl;
 
   fin.close();
+  fout.close();
   return 0;
 }
 
