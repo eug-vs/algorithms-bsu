@@ -125,13 +125,16 @@ int main() {
     tree.insert(key);
   }
 
-  cout << tree << endl;
   vector<int> matches;
   tree.find_matches(matches);
-  for (auto match : matches) cout << match << " ";
-  cout << endl;
+  int true_average = (matches[0] + matches.back()) / 2;
+  int average = matches[0];
+  for (auto match : matches) {
+    if (abs(match - true_average) < abs(average - true_average)) average = match;
+  }
+  tree.remove(average);
+  cout << tree << endl;
 
-  fout.close();
   fin.close();
   return 0;
 }
