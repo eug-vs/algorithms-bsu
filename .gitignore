@@ -1,3 +1,4 @@
-input.txt
-output.txt
+*.txt
+*.in
+*.out
 build
