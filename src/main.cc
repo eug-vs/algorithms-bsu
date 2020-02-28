@@ -92,12 +92,10 @@ class Tree {
 
     int find_matches(vector<int> &matches, Node* node = nullptr) {
       if (!node) node = root;
-      int height_left = 0, height_right = 0;
+      int height_left = -1, height_right = -1;
       if (node->left) height_left = find_matches(matches, node->left);
       if (node->right) height_right = find_matches(matches, node->right);
-      int left = height_left? height_left : -1;
-      int right = height_right? height_right : -1;
-      if (abs(left - right) == 2) matches.push_back(node->value);
+      if (abs(height_left - height_right) == 2) matches.push_back(node->value);
       return max(height_left, height_right) + 1;
     }
 
