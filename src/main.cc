@@ -127,7 +127,9 @@ int main() {
 
   vector<int> matches;
   tree.find_matches(matches);
-  int true_average = (matches[0] + matches.back()) / 2;
+  int sum = 0;
+  for (auto match : matches) sum += match;
+  int true_average = sum / matches.size();
   int average = matches[0];
   for (auto match : matches) {
     if (abs(match - true_average) < abs(average - true_average)) average = match;
