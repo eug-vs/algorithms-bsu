@@ -5,7 +5,7 @@
 using namespace std;
 
 
-int leftmost(vector<int> v, int target) {
+int leftmost(vector<int> v, int target, int &firstfound) {
   int L = 0;
   int R = v.size();
   int i;
@@ -13,15 +13,18 @@ int leftmost(vector<int> v, int target) {
     i = (int)((L + R) / 2);
     if (v[i] < target) {
       L = i + 1;
-    } else {
+    } else  {
       R = i;
+      if (!firstfound && v[i] == target) {
+        firstfound = i;
+      }
     }
   }
   return L;
 }
 
-int rightmost(vector<int> v, int target, int leftmost = 0) {
-  int L = leftmost;
+int rightmost(vector<int> v, int target, int start = 0) {
+  int L = start;
   int R = v.size();
   int i;
   while (L < R) {
@@ -53,9 +56,10 @@ int main() {
   }
 
   for (int query : queries){
-    int l = leftmost(array, query);
+    int firstfound = 0;
+    int l = leftmost(array, query, firstfound);
     bool b = (array[l] == query);
-    int r = b? rightmost(array, query, l) : l;
+    int r = b? rightmost(array, query, firstfound) : l;
     cout << b << " " << l << " " << r << endl;
   };
 
