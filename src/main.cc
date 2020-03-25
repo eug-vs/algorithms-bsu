@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <algorithm>
 using namespace std;
 
 #define INPUT "tst.in"
@@ -125,16 +126,8 @@ int main() {
 
   vector<int> matches;
   tree.find_matches(matches);
-  if (!matches.empty()) {
-    int sum = 0;
-    for (auto match : matches) sum += match;
-    int true_average = sum / matches.size();
-    int average = matches[0];
-    for (auto match : matches) {
-      if (abs(match - true_average) < abs(average - true_average)) average = match;
-    }
-    tree.remove(average);
-  }
+  sort(matches.begin(), matches.end());
+  if (matches.size() % 2) tree.remove(matches[matches.size() / 2]);
   fout << tree << endl;
 
   fin.close();
