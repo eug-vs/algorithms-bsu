@@ -5,7 +5,7 @@
 using namespace std;
 
 
-int leftmost(vector<int> v, int target, int &firstfound) {
+int leftmost(vector<int>& v, int target, int &firstfound) {
   int L = 0;
   int R = v.size();
   int i;
@@ -23,7 +23,7 @@ int leftmost(vector<int> v, int target, int &firstfound) {
   return L;
 }
 
-int rightmost(vector<int> v, int target, int start = 0) {
+int rightmost(vector<int>& v, int target, int start = 0) {
   int L = start;
   int R = v.size();
   int i;
