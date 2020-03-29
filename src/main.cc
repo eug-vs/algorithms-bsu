@@ -5,7 +5,6 @@ using namespace std;
 
 #define INPUT "input.txt"
 #define OUTPUT "output.txt"
-#define DIVISOR 1000000007
 
 int main() {
   ifstream fin;
@@ -14,17 +13,20 @@ int main() {
   fin.open(INPUT);
   fout.open(OUTPUT);
 
-  long long n;
+  int n;
   fin >> n;
+  vector<int> inputs(n);
+  for (int i = 0; i < n; i++) fin >> inputs[i];
 
-  vector<long long> results(n + 1);
-  results[0] = 1;
-  results[1] = 1;
-
-  for (long long i = 2; i < results.size(); i++) {
-    results[i] = (results[i - 1] + results[i - 2]) % DIVISOR;
+  bool answer = true;
+  for (int i = 2; i < n + 1; i++) {
+    if (inputs[i - 1] < inputs[i / 2 - 1]) {
+      answer = false;
+      break;
+    }
   }
-  fout << results[n];
+  
+  fout << (answer? "Yes" : "No") << endl;
 
   fin.close();
   fout.close();
