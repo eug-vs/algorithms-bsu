@@ -1,16 +1,16 @@
+#include <vector>
+#include <map>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <vector>
-#include <map>
+#include <algorithm>
 #include "route.h"
 using namespace std;
 
 #define INPUT "input.txt"
 
 Route getRouteFromString(string s) {
-  Route route;
-  istringstream sin(s);
+  Route route; istringstream sin(s);
   sin >> route.id >> route.driver;
   sin >> route.bus.first >> route.bus.second;
   return route;
@@ -21,20 +21,33 @@ int main() {
   fin.open(INPUT);
 
   vector<Route> routes;
+  map<int, Route> routesMap;
 
   string line;
   while (getline(fin, line)) {
     routes.push_back(getRouteFromString(line));
   }
 
-  for (auto r : routes) {
-    cout << r.id << " " << r.driver << endl;
+  sort(routes.begin(), routes.end(), [](Route a, Route b) {
+    if (a.bus.first == b.bus.first) {
+      return a.id < b.id;
+    } else return a.bus.first < b.bus.first;
+  });
+
+  for (auto route : routes) {
+    cout << route.id << " " << route.driver << endl;
+    routesMap.insert(pair<int, Route>(route.bus.first, route));
   }
 
-  // TODO: sort here
+  int id;
+  cout << "Enter id: ";
+  cin >> id;
 
-  map<int, Route> routesMap;
-
+  for_each(routes.begin(), routes.end(), [id](Route route) {
+    if (route.id == id) {
+      cout << route.bus.second << " #" << route.bus.first << endl;
+    };
+  });
 
   fin.close();
   return 0;
