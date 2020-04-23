@@ -39,6 +39,7 @@ int main() {
     routesMap.insert(pair<int, Route>(route.bus.first, route));
   }
 
+
   int id;
   cout << "Enter id: ";
   cin >> id;
@@ -46,6 +47,17 @@ int main() {
   for_each(routes.begin(), routes.end(), [id](Route route) {
     if (route.id == id) {
       cout << route.bus.second << " #" << route.bus.first << endl;
+    };
+  });
+
+
+  string bus;
+  cout << "Enter bus: ";
+  cin >> bus;
+
+  for_each(routes.begin(), routes.end(), [bus](Route route) {
+    if (route.bus.second == bus) {
+      cout << route.driver << endl;
     };
   });
 
