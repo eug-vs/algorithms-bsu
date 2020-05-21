@@ -1,58 +1,31 @@
+#pragma comment(linker, "/STACK:64000000")
 #include <iostream>
-#include <string>
+#include <vector>
 #include <fstream>
 using namespace std;
 
-#define INPUT "input.txt"
-#define OUTPUT "output.txt"
+#define INPUT "in.txt"
+#define OUTPUT "out.txt"
 
-class Node {
-  private:
-    Node* left;
-    Node* right;
-
-  public:
-    int value;
-
-    Node(int x) {
-      left = nullptr;
-      right = nullptr;
-      value = x;
-    }
-
-    Node(string s) {
-      left = nullptr;
-      right = nullptr;
-      value = stoi(s);
-    }
-
-    void insert(int x) {
-      if (x < value) {
-        if (left) left->insert(x);
-        else left = new Node(x);
-      } else if (x > value) {
-        if (right) right->insert(x);
-        else right = new Node(x);
-      }
-    }
-
-    void insert(string s) {
-      insert(stoi(s));
-    }
-
-    friend ostream& operator<< (ostream& fout, const Node& node) {
-      fout << node.value << endl;
-      if (node.left) fout << *node.left;
-      if (node.right) fout << *node.right;
-      return fout;
-    }
-
-    ~Node() {
-      delete left;
-      delete right;
-    }
+const int knight_moves[8][2] = {
+  { 1, 2 }, { 2, 1 },
+  { 1, -2 }, { 2, -1 },
+  { -1, 2 }, { -2, 1 },
+  { -1, -2 }, { -2, -1 },
 };
 
+void spread(int i, int j, int num, vector<vector<int>>& board) {
+  if (board[i][j] == 0) {
+    board[i][j] = num;
+    for (auto move : knight_moves) {
+      int i2 = i + move[0];
+      int j2 = j + move[1];
+      if (i2 >= 0 && i2 < board.size() && j2 >= 0 && j2 < board[0].size()) {
+        spread(i2, j2, num, board);
+      }
+    }
+  }
+}
 
 int main() {
   ifstream fin;
@@ -62,13 +35,29 @@ int main() {
   fin.open(INPUT);
   fout.open(OUTPUT);
 
-  getline(fin, buffer);
-  Node root(buffer);
-  while(getline(fin, buffer)) {
-    root.insert(buffer);
+  int n, m;
+  fin >> n >> m;
+  vector<vector<int>> board(n);
+
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < m; j++) {
+      int value;
+      fin >> value;
+      board[i].push_back(value);
+    }
   }
 
-  fout << root;
+  int knights_num = 0;
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < m; j++) {
+      if (board[i][j] == 0) {
+        knights_num += 1;
+        spread(i, j, knights_num, board);
+      }
+    }
+  }
+
+  fout << knights_num << endl;
 
   fout.close();
   fin.close();
