@@ -4,112 +4,25 @@
 #include <algorithm>
 using namespace std;
 
-#define INPUT "tst.in"
-#define OUTPUT "tst.out"
+#define INPUT "in.txt"
+#define OUTPUT "out.txt"
 
 
-class Tree {
-  private:
-    class Node {
-      public:
-        int value;
-        Node* left;
-        Node* right;
-
-        Node(int x) {
-          left = nullptr;
-          right = nullptr;
-          value = x;
-        }
-
-        void insert(int x) {
-          if (x < value) {
-            if (left) left->insert(x);
-            else left = new Node(x);
-          } else if (x > value) {
-            if (right) right->insert(x);
-            else right = new Node(x);
-          }
-        }
-
-        friend ostream& operator<< (ostream& os, const Node& node) {
-          os << node.value << endl;
-          if (node.left) os << *node.left;
-          if (node.right) os << *node.right;
-          return os;
-        }
-
-        ~Node() {
-          delete left;
-          delete right;
-        }
-    };
-    Node* root;
-
-  public:
-    Tree() {
-      root = nullptr;
-    }
-
-    void insert(int x) {
-      if (root) {
-        root->insert(x);
-      } else {
-        root = new Node(x);
-      }
-    }
-
-    void remove(int x) {
-      Node** current = &root;
-      Node* child = nullptr;
-
-      while((child = *current) && (child->value !=x)) {
-        if (child->value > x) {
-          if (child->left) current = &child->left;
-          else return;
-        } else {
-          if (child->right) current = &child->right;
-          else return;
-        }
-      }
-      if (child->left && child->right) {
-        Node* max = child->left;
-        while(max->right) max = max->right;
-        int max_key = max->value;
-        remove(max_key);
-        child->value = max_key;
-        return;
-      } else if (child->left && !child->right) {
-        *current = child->left;
-        child->left = nullptr;
-      } else if (!child->left && child->right) {
-        *current = child->right;
-        child->right = nullptr;
-      } else {
-        *current = nullptr;
-      }
-      delete child;
-    }
-
-    int find_matches(vector<int> &matches, Node* node = nullptr) {
-      if (!node) node = root;
-      int height_left = -1, height_right = -1;
-      if (node->left) height_left = find_matches(matches, node->left);
-      if (node->right) height_right = find_matches(matches, node->right);
-      if (abs(height_left - height_right) == 2) matches.push_back(node->value);
-      return max(height_left, height_right) + 1;
-    }
-
-    friend ostream& operator<< (ostream& os, const Tree& tree) {
-      os << *tree.root;
-      return os;
-    }
-
-    ~Tree() {
-      delete root;
-    }
+struct Node {
+  long long value;
+  int parentId;
+  long long sum;
 };
 
+void proceed(int id, vector<Node>& nodes) {
+  Node* node = &nodes[id];
+  int parentId = node->parentId;
+  long long sum = node->value + node->sum;
+  if (sum < nodes[parentId].sum || !nodes[parentId].sum) {
+    nodes[parentId].sum = sum;
+    if (parentId != 0) proceed(parentId, nodes);
+  }
+}
 
 int main() {
   ifstream fin;
@@ -118,17 +31,53 @@ int main() {
   fin.open(INPUT);
   fout.open(OUTPUT);
 
-  int key;
-  Tree tree;
-  while(fin >> key) {
-    tree.insert(key);
+  int n;
+  fin >> n;
+
+  vector<Node> nodes(n);
+  vector<int> leafIds;
+
+  for (int i = 0; i < n; i++) {
+    int id, childrenCount;
+    fin >> id >> childrenCount;
+    id--;
+    if (childrenCount == 0) leafIds.push_back(id);
+    for (int j = 0; j < childrenCount; j++) {
+      int childId, value;
+      fin >> childId >> value;
+      childId--;
+
+      nodes[childId].parentId = id;
+      nodes[childId].value = value;
+    }
   }
 
-  vector<int> matches;
-  tree.find_matches(matches);
-  sort(matches.begin(), matches.end());
-  if (matches.size() % 2) tree.remove(matches[matches.size() / 2]);
-  fout << tree << endl;
+  sort(leafIds.begin(), leafIds.end(), [nodes](int a, int b) {
+    return nodes[a].value < nodes[b].value;
+  });
+
+  int bestLeafId;
+  long long bestSum = 0;
+  for (int id : leafIds) {
+    proceed(id, nodes);
+    if (!bestSum || nodes[0].sum < bestSum) {
+      bestLeafId = id;
+      bestSum = nodes[0].sum;
+    }
+  }
+
+  vector<int> path;
+  int id = bestLeafId;
+  while (id != 0) {
+    path.push_back(id);
+    id = nodes[id].parentId;
+  }
+
+  fout << bestSum << endl;
+  for (int i = path.size(); i >= 0; i--) {
+    fout << path[i] + 1 << " ";
+  }
+  fout << endl;
 
   fin.close();
   fout.close();
