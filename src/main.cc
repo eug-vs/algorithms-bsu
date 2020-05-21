@@ -1,3 +1,4 @@
+#pragma comment(linker, "/STACK:64000000")
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -7,21 +8,25 @@ using namespace std;
 #define INPUT "in.txt"
 #define OUTPUT "out.txt"
 
-
 struct Node {
-  long long value;
-  int parentId;
-  long long sum;
+  long long value = 0;
+  vector<int> childrenIds;
+  int bestChildId = 0;
 };
 
-void proceed(int id, vector<Node>& nodes) {
+long long proceed(int id, vector<Node>& nodes) {
+  // cout << "Proceed id=" << id + 1 << endl;
   Node* node = &nodes[id];
-  int parentId = node->parentId;
-  long long sum = node->value + node->sum;
-  if (sum < nodes[parentId].sum || !nodes[parentId].sum) {
-    nodes[parentId].sum = sum;
-    if (parentId != 0) proceed(parentId, nodes);
+  long long sum = -1;
+  for (int childId : node->childrenIds) {
+    long long childSum = proceed(childId, nodes);
+    if (sum < 0 || childSum < sum) {
+      // cout << "Better childSum=" << childSum << " for id=" << id + 1 << " bestLeafId=" << childId + 1 << endl;
+      sum = childSum;
+      node->bestChildId = childId;
+    }
   }
+  return sum > 0 ? (node->value + sum) : node->value;
 }
 
 int main() {
@@ -35,49 +40,30 @@ int main() {
   fin >> n;
 
   vector<Node> nodes(n);
-  vector<int> leafIds;
 
   for (int i = 0; i < n; i++) {
     int id, childrenCount;
     fin >> id >> childrenCount;
     id--;
-    if (childrenCount == 0) leafIds.push_back(id);
     for (int j = 0; j < childrenCount; j++) {
       int childId, value;
       fin >> childId >> value;
       childId--;
 
-      nodes[childId].parentId = id;
+      nodes[id].childrenIds.push_back(childId);
       nodes[childId].value = value;
     }
   }
 
-  sort(leafIds.begin(), leafIds.end(), [nodes](int a, int b) {
-    return nodes[a].value < nodes[b].value;
-  });
-
-  int bestLeafId;
-  long long bestSum = 0;
-  for (int id : leafIds) {
-    proceed(id, nodes);
-    if (!bestSum || nodes[0].sum < bestSum) {
-      bestLeafId = id;
-      bestSum = nodes[0].sum;
-    }
-  }
-
-  vector<int> path;
-  int id = bestLeafId;
-  while (id != 0) {
-    path.push_back(id);
-    id = nodes[id].parentId;
-  }
-
+  long long bestSum = proceed(0, nodes);
   fout << bestSum << endl;
-  for (int i = path.size(); i >= 0; i--) {
-    fout << path[i] + 1 << " ";
+  
+  int walker = 0;
+  while(nodes[walker].bestChildId) {
+    fout << walker + 1 << " ";
+    walker = nodes[walker].bestChildId;
   }
-  fout << endl;
+  fout << walker + 1 << endl;
 
   fin.close();
   fout.close();
